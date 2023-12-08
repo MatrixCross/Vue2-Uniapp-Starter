@@ -6,14 +6,8 @@ if (process.env.UNI_OPT_TREESHAKINGNG) {
 }
 
 if (
-  (
-    process.env.UNI_PLATFORM === 'app-plus' &&
-    process.env.UNI_USING_V8
-  ) ||
-  (
-    process.env.UNI_PLATFORM === 'h5' &&
-    process.env.UNI_H5_BROWSER === 'builtin'
-  )
+  (process.env.UNI_PLATFORM === 'app-plus' && process.env.UNI_USING_V8) ||
+  (process.env.UNI_PLATFORM === 'h5' && process.env.UNI_H5_BROWSER === 'builtin')
 ) {
   const path = require('path')
 
@@ -26,16 +20,16 @@ if (
     plugins.push([
       require('@dcloudio/vue-cli-plugin-hbuilderx/packages/babel-plugin-console'),
       {
-        file (file) {
+        file(file) {
           file = normalizePath(file)
           if (file.indexOf(input) === 0) {
             return path.relative(input, file)
           }
           return false
-        }
-      }
+        },
+      },
     ])
-  } catch (e) { }
+  } catch (e) {}
 }
 
 process.UNI_LIBRARIES = process.UNI_LIBRARIES || ['@dcloudio/uni-ui']
@@ -43,11 +37,11 @@ process.UNI_LIBRARIES.forEach(libraryName => {
   plugins.push([
     'import',
     {
-      'libraryName': libraryName,
-      'customName': (name) => {
+      libraryName: libraryName,
+      customName: name => {
         return `${libraryName}/lib/${name}/${name}`
-      }
-    }
+      },
+    },
   ])
 })
 
@@ -61,19 +55,21 @@ const config = {
       '@vue/app',
       {
         modules: webpack.version[0] > 4 ? 'auto' : 'commonjs',
-        useBuiltIns: process.env.UNI_PLATFORM === 'h5' ? 'usage' : 'entry'
-      }
-    ]
+        useBuiltIns: process.env.UNI_PLATFORM === 'h5' ? 'usage' : 'entry',
+      },
+    ],
   ],
-  plugins
+  plugins,
 }
 
 const UNI_H5_TEST = '**/@dcloudio/uni-h5/dist/index.umd.min.js'
 if (process.env.NODE_ENV === 'production') {
-  config.overrides = [{
-    test: UNI_H5_TEST,
-    compact: true,
-  }]
+  config.overrides = [
+    {
+      test: UNI_H5_TEST,
+      compact: true,
+    },
+  ]
 } else {
   config.ignore = [UNI_H5_TEST]
 }
